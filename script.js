@@ -6,7 +6,7 @@
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyZHFQn7Ua1lFpme0Jsl1YPyLbvPv1JwaGSnkaZNqdJmF5PMXroN_6Po_4qesKi9tlbUw/exec';
 
 // --------------------------------------------------------
-// Initial Catalog & Pricing Data (Pre-loaded from Sheet2)
+// Initial Catalog & Pricing Data
 // --------------------------------------------------------
 let catalogData = [
     { name: "Azure Tide", website: 65, meesho: null, offline: 65, stock: 1, manufactured: 1 },
@@ -44,44 +44,6 @@ let catalogData = [
 let salesLog = [];
 let currentTab = 'sales'; // 'sales' or 'inventory'
 
-
-    // --------------------------------------------------------
-    // Mobile Bottom Navigation Logic
-    // --------------------------------------------------------
-    const mobileNavSales = document.getElementById('mobileNavSales');
-    const mobileNavInventory = document.getElementById('mobileNavInventory');
-    const mobileActionBtn = document.getElementById('mobileActionBtn');
-
-    if (mobileNavSales && mobileNavInventory) {
-        mobileNavSales.addEventListener('click', () => {
-            switchTab('sales');
-            updateMobileNavState('sales');
-        });
-
-        mobileNavInventory.addEventListener('click', () => {
-            switchTab('inventory');
-            updateMobileNavState('inventory');
-        });
-
-        mobileActionBtn.addEventListener('click', () => {
-            if (currentTab === 'sales') {
-                saleModalOverlay.classList.remove('hidden');
-            } else {
-                inventoryModalOverlay.classList.remove('hidden');
-            }
-        });
-    }
-
-    function updateMobileNavState(tab) {
-        if (tab === 'sales') {
-            mobileNavSales.classList.add('active');
-            mobileNavInventory.classList.remove('active');
-        } else {
-            mobileNavInventory.classList.add('active');
-            mobileNavSales.classList.remove('active');
-        }
-    }
-
 // DOM Elements
 const themeToggleBtn = document.getElementById('themeToggleBtn');
 const tabNavSales = document.getElementById('tabNavSales');
@@ -92,6 +54,11 @@ const viewInventory = document.getElementById('viewInventory');
 
 const mainActionBtn = document.getElementById('mainActionBtn');
 const mainActionText = document.getElementById('mainActionText');
+
+// Mobile Nav
+const mobileNavSales = document.getElementById('mobileNavSales');
+const mobileNavInventory = document.getElementById('mobileNavInventory');
+const mobileActionBtn = document.getElementById('mobileActionBtn');
 
 // Modals
 const saleModalOverlay = document.getElementById('saleModalOverlay');
@@ -128,35 +95,96 @@ const statInvTotalItems = document.getElementById('statInvTotalItems');
 const statInvTotalStock = document.getElementById('statInvTotalStock');
 const statInvLowStock = document.getElementById('statInvLowStock');
 
-// Tables
+// Tables & Search
 const salesTableBody = document.getElementById('salesTableBody');
 const emptySalesRow = document.getElementById('emptySalesRow');
 const inventoryTableBody = document.getElementById('inventoryTableBody');
-
-// Search Inputs
 const salesSearchInput = document.getElementById('salesSearchInput');
 const inventorySearchInput = document.getElementById('inventorySearchInput');
 
 // --------------------------------------------------------
-// Initialize App
+// App Initialization
 // --------------------------------------------------------
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     initTheme();
-    populateProductDropdown();
-    renderInventoryTable();
-    updateInventoryStats();
-    lucide.createIcons();
-    
-    // Set default tab state
+    if (typeof lucide !== 'undefined') lucide.createIcons();
     switchTab('sales');
+
+    if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_URL !== '') {
+        await loadDataFromSheet();
+    } else {
+        // Fallback local rendering
+        populateProductDropdown();
+        renderInventoryTable();
+        updateInventoryStats();
+        renderSalesTable();
+        updateSalesStats();
+    }
 });
+
+async function loadDataFromSheet() {
+    try {
+        const response = await fetch(GOOGLE_APPS_SCRIPT_URL);
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            if (result.catalog && result.catalog.length > 0) {
+                catalogData = result.catalog;
+            }
+            if (result.sales) {
+                salesLog = result.sales;
+            }
+
+            // Refresh UI components with Google Sheet data
+            populateProductDropdown();
+            renderInventoryTable();
+            updateInventoryStats();
+            renderSalesTable();
+            updateSalesStats();
+        }
+    } catch (error) {
+        console.error("Error fetching data from Google Sheets:", error);
+    }
+}
+
+// Mobile Bottom Navigation Setup
+if (mobileNavSales && mobileNavInventory) {
+    mobileNavSales.addEventListener('click', () => {
+        switchTab('sales');
+        updateMobileNavState('sales');
+    });
+
+    mobileNavInventory.addEventListener('click', () => {
+        switchTab('inventory');
+        updateMobileNavState('inventory');
+    });
+
+    if (mobileActionBtn) {
+        mobileActionBtn.addEventListener('click', () => {
+            if (currentTab === 'sales') {
+                saleModalOverlay.classList.remove('hidden');
+            } else {
+                inventoryModalOverlay.classList.remove('hidden');
+            }
+        });
+    }
+}
+
+function updateMobileNavState(tab) {
+    if (tab === 'sales') {
+        mobileNavSales.classList.add('active');
+        mobileNavInventory.classList.remove('active');
+    } else {
+        mobileNavInventory.classList.add('active');
+        mobileNavSales.classList.remove('active');
+    }
+}
 
 // --------------------------------------------------------
 // Theme Switcher (Light / Dark)
 // --------------------------------------------------------
 function initTheme() {
     const savedTheme = localStorage.getItem('aura_theme');
-    // Default to light mode unless the user has explicitly saved 'dark'
     if (savedTheme === 'dark') {
         document.documentElement.classList.add('dark');
         document.documentElement.classList.remove('light');
@@ -166,21 +194,23 @@ function initTheme() {
     }
 }
 
-themeToggleBtn.addEventListener('click', () => {
-    const isDark = document.documentElement.classList.contains('dark');
-    if (isDark) {
-        document.documentElement.classList.remove('dark');
-        document.documentElement.classList.add('light');
-        localStorage.setItem('aura_theme', 'light');
-    } else {
-        document.documentElement.classList.add('dark');
-        document.documentElement.classList.remove('light');
-        localStorage.setItem('aura_theme', 'dark');
-    }
-});
+if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.contains('dark');
+        if (isDark) {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
+            localStorage.setItem('aura_theme', 'light');
+        } else {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+            localStorage.setItem('aura_theme', 'dark');
+        }
+    });
+}
 
 // --------------------------------------------------------
-// Tab Navigation Switcher
+// Tab Navigation
 // --------------------------------------------------------
 function switchTab(tab) {
     currentTab = tab;
@@ -203,29 +233,31 @@ function switchTab(tab) {
     }
 }
 
-tabNavSales.addEventListener('click', () => switchTab('sales'));
-tabNavInventory.addEventListener('click', () => switchTab('inventory'));
+if (tabNavSales) tabNavSales.addEventListener('click', () => switchTab('sales'));
+if (tabNavInventory) tabNavInventory.addEventListener('click', () => switchTab('inventory'));
 
-// Action Button Click routing
-mainActionBtn.addEventListener('click', () => {
-    if (currentTab === 'sales') {
-        saleModalOverlay.classList.remove('hidden');
-    } else {
-        inventoryModalOverlay.classList.remove('hidden');
-    }
-});
+if (mainActionBtn) {
+    mainActionBtn.addEventListener('click', () => {
+        if (currentTab === 'sales') {
+            saleModalOverlay.classList.remove('hidden');
+        } else {
+            inventoryModalOverlay.classList.remove('hidden');
+        }
+    });
+}
 
 // Modal Closures
-closeSaleModalBtn.addEventListener('click', () => saleModalOverlay.classList.add('hidden'));
-cancelSaleBtn.addEventListener('click', () => saleModalOverlay.classList.add('hidden'));
+if (closeSaleModalBtn) closeSaleModalBtn.addEventListener('click', () => saleModalOverlay.classList.add('hidden'));
+if (cancelSaleBtn) cancelSaleBtn.addEventListener('click', () => saleModalOverlay.classList.add('hidden'));
 
-closeInventoryModalBtn.addEventListener('click', () => inventoryModalOverlay.classList.add('hidden'));
-cancelInventoryBtn.addEventListener('click', () => inventoryModalOverlay.classList.add('hidden'));
+if (closeInventoryModalBtn) closeInventoryModalBtn.addEventListener('click', () => inventoryModalOverlay.classList.add('hidden'));
+if (cancelInventoryBtn) cancelInventoryBtn.addEventListener('click', () => inventoryModalOverlay.classList.add('hidden'));
 
 // --------------------------------------------------------
-// Populate Product Dropdowns & Auto-Pricing
+// Dropdowns & Auto-Pricing
 // --------------------------------------------------------
 function populateProductDropdown() {
+    if (!saleProductSelect) return;
     saleProductSelect.innerHTML = `<option value="" disabled selected>Select a Product...</option>`;
     catalogData.forEach(item => {
         const option = document.createElement('option');
@@ -249,76 +281,85 @@ function autoFillPrice() {
     } else if (selectedPlat === 'Offline') {
         salePriceInput.value = item.offline !== null ? item.offline : item.website;
     } else {
-        salePriceInput.value = item.website; // Default Website/Instagram/WhatsApp
+        salePriceInput.value = item.website;
     }
 }
 
-saleProductSelect.addEventListener('change', autoFillPrice);
-salePlatformSelect.addEventListener('change', autoFillPrice);
+if (saleProductSelect) saleProductSelect.addEventListener('change', autoFillPrice);
+if (salePlatformSelect) salePlatformSelect.addEventListener('change', autoFillPrice);
 
 // --------------------------------------------------------
 // Submit Sale Form
 // --------------------------------------------------------
-saleForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+if (saleForm) {
+    saleForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    const submitBtn = document.getElementById('submitSaleBtn');
-    submitBtn.disabled = true;
-    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        const submitBtn = document.getElementById('submitSaleBtn');
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
 
-    const newSale = {
-        type: 'sale',
-        product: saleProductSelect.value,
-        platform: salePlatformSelect.value,
-        price: parseFloat(salePriceInput.value),
-        mode: saleModeSelect.value,
-        date: new Date().toISOString().split('T')[0],
-        notes: saleNotesInput.value.trim()
-    };
+        const newSale = {
+            type: 'sale',
+            product: saleProductSelect.value,
+            platform: salePlatformSelect.value,
+            price: parseFloat(salePriceInput.value),
+            mode: saleModeSelect.value,
+            date: new Date().toISOString().split('T')[0],
+            notes: saleNotesInput.value.trim()
+        };
 
-    // Deduct stock locally
-    const catalogItem = catalogData.find(i => i.name === newSale.product);
-    if (catalogItem && catalogItem.stock > 0) {
-        catalogItem.stock -= 1;
-        renderInventoryTable();
-        updateInventoryStats();
-    }
-
-    // Post to Google Apps Script
-    if (GOOGLE_APPS_SCRIPT_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
-        try {
-            await fetch(GOOGLE_APPS_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newSale)
-            });
-        } catch (err) {
-            console.error("Error logging sale to Google Sheets:", err);
+        // Deduct stock locally
+        const catalogItem = catalogData.find(i => i.name === newSale.product);
+        if (catalogItem && catalogItem.stock > 0) {
+            catalogItem.stock -= 1;
+            renderInventoryTable();
+            updateInventoryStats();
         }
+
+        // Post to Google Apps Script
+        if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_URL !== '') {
+            try {
+                await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newSale)
+                });
+            } catch (err) {
+                console.error("Error logging sale to Google Sheets:", err);
+            }
+        }
+
+        // Update Sales UI
+        salesLog.unshift(newSale);
+        renderSalesTable();
+        updateSalesStats();
+
+        // Reset Form & Close Modal
+        saleForm.reset();
+        salePriceInput.value = '';
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        saleModalOverlay.classList.add('hidden');
+    });
+}
+
+function renderSalesTable() {
+    if (!salesTableBody) return;
+    
+    if (salesLog.length === 0) {
+        salesTableBody.innerHTML = `
+            <tr id="emptySalesRow">
+                <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                    No sales recorded yet. Click "New Sale Entry" to log a sale.
+                </td>
+            </tr>`;
+        return;
     }
 
-    // Update Sales UI
-    salesLog.unshift(newSale);
-    renderSalesTable();
-    updateSalesStats();
-
-    // Reset Form & Close Modal
-    saleForm.reset();
-    salePriceInput.value = '';
-    submitBtn.disabled = false;
-    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-    saleModalOverlay.classList.add('hidden');
-});
-
-// Render Sales Table
-function renderSalesTable() {
-    if (salesLog.length === 0) return;
-
-    if (emptySalesRow) emptySalesRow.remove();
     salesTableBody.innerHTML = '';
-
-    const filterText = salesSearchInput.value.toLowerCase();
+    const filterText = salesSearchInput ? salesSearchInput.value.toLowerCase() : '';
 
     salesLog.forEach(item => {
         if (filterText && !item.product.toLowerCase().includes(filterText) && !item.platform.toLowerCase().includes(filterText)) {
@@ -330,7 +371,7 @@ function renderSalesTable() {
         row.innerHTML = `
             <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">${item.product}</td>
             <td class="px-6 py-4 text-slate-600 dark:text-slate-300">${item.platform}</td>
-            <td class="px-6 py-4 font-bold text-slate-900 dark:text-emerald-400">₹${item.price.toFixed(2)}</td>
+            <td class="px-6 py-4 font-bold text-slate-900 dark:text-emerald-400">₹${Number(item.price).toFixed(2)}</td>
             <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300">${item.mode}</span></td>
             <td class="px-6 py-4 text-xs text-slate-500 dark:text-slate-400">${item.date}</td>
             <td class="px-6 py-4 text-xs text-slate-500 dark:text-slate-400">${item.notes || '-'}</td>
@@ -340,75 +381,76 @@ function renderSalesTable() {
 }
 
 function updateSalesStats() {
-    const totalRev = salesLog.reduce((acc, curr) => acc + curr.price, 0);
+    const totalRev = salesLog.reduce((acc, curr) => acc + (Number(curr.price) || 0), 0);
     const count = salesLog.length;
     const avg = count > 0 ? totalRev / count : 0;
 
-    statRevenue.textContent = `₹${totalRev.toFixed(2)}`;
-    statSalesCount.textContent = count.toString();
-    statAvgValue.textContent = `₹${avg.toFixed(2)}`;
-    statTotalProductsCount.textContent = catalogData.length.toString();
+    if (statRevenue) statRevenue.textContent = `₹${totalRev.toFixed(2)}`;
+    if (statSalesCount) statSalesCount.textContent = count.toString();
+    if (statAvgValue) statAvgValue.textContent = `₹${avg.toFixed(2)}`;
+    if (statTotalProductsCount) statTotalProductsCount.textContent = catalogData.length.toString();
 }
 
-salesSearchInput.addEventListener('input', renderSalesTable);
+if (salesSearchInput) salesSearchInput.addEventListener('input', renderSalesTable);
 
 // --------------------------------------------------------
 // Submit Inventory / Add Catalog Product
 // --------------------------------------------------------
-inventoryForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+if (inventoryForm) {
+    inventoryForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    const submitBtn = document.getElementById('submitInventoryBtn');
-    submitBtn.disabled = true;
-    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        const submitBtn = document.getElementById('submitInventoryBtn');
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
 
-    const newProduct = {
-        type: 'inventory',
-        name: invProductName.value.trim(),
-        website: parseFloat(invPriceWebsite.value) || 0,
-        meesho: invPriceMeesho.value ? parseFloat(invPriceMeesho.value) : null,
-        offline: invPriceOffline.value ? parseFloat(invPriceOffline.value) : null,
-        stock: parseInt(invStock.value) || 0,
-        manufactured: parseInt(invManufactured.value) || 0
-    };
+        const newProduct = {
+            type: 'inventory',
+            name: invProductName.value.trim(),
+            website: parseFloat(invPriceWebsite.value) || 0,
+            meesho: invPriceMeesho.value ? parseFloat(invPriceMeesho.value) : null,
+            offline: invPriceOffline.value ? parseFloat(invPriceOffline.value) : null,
+            stock: parseInt(invStock.value) || 0,
+            manufactured: parseInt(invManufactured.value) || 0
+        };
 
-    // Check if exists or push
-    const existingIndex = catalogData.findIndex(i => i.name.toLowerCase() === newProduct.name.toLowerCase());
-    if (existingIndex >= 0) {
-        catalogData[existingIndex] = newProduct;
-    } else {
-        catalogData.push(newProduct);
-    }
-
-    // Sync to Google Apps Script
-    if (GOOGLE_APPS_SCRIPT_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
-        try {
-            await fetch(GOOGLE_APPS_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newProduct)
-            });
-        } catch (err) {
-            console.error("Error updating inventory in Google Sheets:", err);
+        const existingIndex = catalogData.findIndex(i => i.name.toLowerCase() === newProduct.name.toLowerCase());
+        if (existingIndex >= 0) {
+            catalogData[existingIndex] = newProduct;
+        } else {
+            catalogData.push(newProduct);
         }
-    }
 
-    // Refresh UI
-    populateProductDropdown();
-    renderInventoryTable();
-    updateInventoryStats();
+        // Sync to Google Apps Script
+        if (GOOGLE_APPS_SCRIPT_URL && GOOGLE_APPS_SCRIPT_URL !== '') {
+            try {
+                await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newProduct)
+                });
+            } catch (err) {
+                console.error("Error updating inventory in Google Sheets:", err);
+            }
+        }
 
-    inventoryForm.reset();
-    submitBtn.disabled = false;
-    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-    inventoryModalOverlay.classList.add('hidden');
-});
+        // Refresh UI
+        populateProductDropdown();
+        renderInventoryTable();
+        updateInventoryStats();
 
-// Render Inventory Catalog Table
+        inventoryForm.reset();
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        inventoryModalOverlay.classList.add('hidden');
+    });
+}
+
 function renderInventoryTable() {
+    if (!inventoryTableBody) return;
     inventoryTableBody.innerHTML = '';
-    const filterText = inventorySearchInput.value.toLowerCase();
+    const filterText = inventorySearchInput ? inventorySearchInput.value.toLowerCase() : '';
 
     catalogData.forEach(item => {
         if (filterText && !item.name.toLowerCase().includes(filterText)) {
@@ -440,10 +482,10 @@ function updateInventoryStats() {
     const totalStock = catalogData.reduce((acc, curr) => acc + (curr.stock || 0), 0);
     const lowStock = catalogData.filter(i => (i.stock || 0) <= 0).length;
 
-    statInvTotalItems.textContent = totalItems.toString();
-    statInvTotalStock.textContent = totalStock.toString();
-    statInvLowStock.textContent = lowStock.toString();
-    statTotalProductsCount.textContent = totalItems.toString();
+    if (statInvTotalItems) statInvTotalItems.textContent = totalItems.toString();
+    if (statInvTotalStock) statInvTotalStock.textContent = totalStock.toString();
+    if (statInvLowStock) statInvLowStock.textContent = lowStock.toString();
+    if (statTotalProductsCount) statTotalProductsCount.textContent = totalItems.toString();
 }
 
-inventorySearchInput.addEventListener('input', renderInventoryTable);
+if (inventorySearchInput) inventorySearchInput.addEventListener('input', renderInventoryTable);
