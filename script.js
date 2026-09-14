@@ -2,8 +2,7 @@
 // AURA SALES & INVENTORY MANAGEMENT SCRIPT
 // ========================================================
 
-// ✅ UPDATED with your NEW Web App URL
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbykEFuycstwCH-cwUcE_39snY4lUzkTf7gXpNiEvJBdvIrrk2dYZW0Fgg4COG4WKMxETA/exec';
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzg6oe07zIaxo_lv8dja4zkK3muqBJCuy2AP3TCPsfVkwqbXsF149ZvwTR0CghpUD6qwg/exec';
 
 const DEFAULT_CATALOG = [
     { name: "Azure Tide", website: 65, meesho: null, offline: 65, stock: 1, manufactured: 1 },
@@ -99,6 +98,7 @@ const statsDashStock = document.getElementById('statsDashStock');
 const salesTableBody = document.getElementById('salesTableBody');
 const inventoryTableBody = document.getElementById('inventoryTableBody');
 const salesSearchInput = document.getElementById('salesSearchInput');
+const salesSortSelect = document.getElementById('salesSortSelect'); // NEW: Sorting element
 const inventorySearchInput = document.getElementById('inventorySearchInput');
 
 // ========================================================
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ========================================================
-// GOOGLE SHEETS SYNC — FIXED FOR YOUR EXACT JSON
+// GOOGLE SHEETS SYNC
 // ========================================================
 async function loadDataFromSheet() {
     try {
@@ -145,9 +145,6 @@ async function loadDataFromSheet() {
         const result = await response.json();
         console.log("📦 Response received:", result.status);
 
-        // -------------------------------------------------
-        // Parse Catalog — matches your JSON exactly
-        // -------------------------------------------------
         if (Array.isArray(result.catalog) && result.catalog.length > 0) {
             catalogData = result.catalog.map(item => ({
                 name: String(item.name || '').trim(),
@@ -161,13 +158,8 @@ async function loadDataFromSheet() {
                 stock: parseInt(item.stock) || 0,
                 manufactured: parseInt(item.manufactured) || 0
             })).filter(i => i.name);
-            console.log(`✅ ${catalogData.length} catalog items loaded.`);
         }
 
-        // -------------------------------------------------
-        // Parse Sales — matches your JSON exactly
-        // Your sales structure: {sno, product, date, platform, price, mode, notes}
-        // -------------------------------------------------
         if (Array.isArray(result.sales) && result.sales.length > 0) {
             salesLog = result.sales
                 .filter(item => item && item.product && String(item.product).trim() !== '')
@@ -179,9 +171,7 @@ async function loadDataFromSheet() {
                     date: formatDate(item.date),
                     notes: String(item.notes || '').trim()
                 }));
-            console.log(`✅ ${salesLog.length} sales loaded:`, salesLog);
         } else {
-            console.warn("⚠️ No sales returned from sheet.");
             salesLog = [];
         }
 
@@ -414,7 +404,7 @@ if (inventoryForm) {
 }
 
 // ========================================================
-// RENDER SALES TABLE
+// RENDER SALES TABLE (UPDATED WITH SORTING & FILTERING)
 // ========================================================
 function renderSalesTable() {
     if (!salesTableBody) return;
@@ -426,20 +416,35 @@ function renderSalesTable() {
 
     salesTableBody.innerHTML = '';
     const filterText = salesSearchInput ? salesSearchInput.value.toLowerCase().trim() : '';
+    const sortMode = salesSortSelect ? salesSortSelect.value : 'date-desc';
 
-    salesLog.forEach(item => {
+    // 1. Filter
+    let processedLog = salesLog.filter(item => {
+        const product = String(item.product || '').trim().toLowerCase();
+        const platform = String(item.platform || '').trim().toLowerCase();
+        return !filterText || product.includes(filterText) || platform.includes(filterText);
+    });
+
+    // 2. Sort
+    processedLog.sort((a, b) => {
+        if (sortMode === 'price-desc') return Number(b.price) - Number(a.price);
+        if (sortMode === 'price-asc') return Number(a.price) - Number(b.price);
+        if (sortMode === 'date-asc') return new Date(a.date) - new Date(b.date);
+        return new Date(b.date) - new Date(a.date); // default to date-desc
+    });
+
+    // 3. Render
+    processedLog.forEach(item => {
         const product = String(item.product || '').trim();
         const platform = String(item.platform || '').trim();
 
-        if (filterText && !product.toLowerCase().includes(filterText) && !platform.toLowerCase().includes(filterText)) return;
-
         const row = document.createElement('tr');
-        row.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition';
+        row.className = 'hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition';
         row.innerHTML = `
             <td class="px-6 py-4 font-medium text-slate-900 dark:text-white" data-label="Product">${product}</td>
             <td class="px-6 py-4 text-slate-600 dark:text-slate-300" data-label="Platform">${platform}</td>
             <td class="px-6 py-4 font-bold text-slate-900 dark:text-emerald-400" data-label="Amount">₹${Number(item.price).toFixed(2)}</td>
-            <td class="px-6 py-4" data-label="Payment"><span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300">${item.mode}</span></td>
+            <td class="px-6 py-4" data-label="Payment"><span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-brand-50/50 dark:bg-brand-950/30 text-brand-700 dark:text-brand-300 backdrop-blur-sm">${item.mode}</span></td>
             <td class="px-6 py-4 text-xs text-slate-500 dark:text-slate-400" data-label="Date">${item.date}</td>
             <td class="px-6 py-4 text-xs text-slate-500 dark:text-slate-400" data-label="Notes">${item.notes || '-'}</td>
         `;
@@ -459,11 +464,11 @@ function renderInventoryTable() {
         if (filterText && !String(item.name || '').toLowerCase().includes(filterText)) return;
 
         const row = document.createElement('tr');
-        row.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition';
+        row.className = 'hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition';
 
         const statusBadge = item.stock > 0 
-            ? `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400">In Stock</span>`
-            : `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400">Out of Stock</span>`;
+            ? `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 dark:bg-emerald-400/10 text-emerald-600 dark:text-emerald-400 backdrop-blur-sm">In Stock</span>`
+            : `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 dark:bg-rose-400/10 text-rose-600 dark:text-rose-400 backdrop-blur-sm">Out of Stock</span>`;
 
         row.innerHTML = `
             <td class="px-6 py-4 font-semibold text-slate-900 dark:text-white" data-label="Product">${item.name}</td>
@@ -514,5 +519,7 @@ function updateStatsDashboard() {
     if (statsDashStock) statsDashStock.textContent = totalStock.toString();
 }
 
+// Event Listeners for search and sort inputs
 if (salesSearchInput) salesSearchInput.addEventListener('input', renderSalesTable);
+if (salesSortSelect) salesSortSelect.addEventListener('change', renderSalesTable);
 if (inventorySearchInput) inventorySearchInput.addEventListener('input', renderInventoryTable);

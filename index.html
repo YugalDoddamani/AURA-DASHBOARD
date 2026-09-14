@@ -10,33 +10,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: {
-                        brand: {
-                            50: '#fdf2f4',
-                            100: '#fbe5e9',
-                            400: '#f4aeb6',
-                            500: '#ec7b8a',
-                            600: '#d94960',
-                            700: '#b83348',
-                            900: '#8c1b40',
-                            950: '#4a0d20'
-                        }
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: { sans: ['Inter', 'sans-serif'] },
+                colors: {
+                    brand: {
+                        50: '#fdf2f8',
+                        100: '#fce7f3',
+                        200: '#fbcfe8',
+                        300: '#f9a8d4',
+                        400: '#f472b6',
+                        500: '#ec4899', /* Vibrant Aura Pink */
+                        600: '#db2777', /* Deep Magenta */
+                        700: '#be185d',
+                        800: '#9d174d',
+                        900: '#831843',
+                        950: '#500f2d'
                     }
                 }
             }
         }
-    </script>
+    }
+</script>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-200 font-sans antialiased min-h-screen transition-colors duration-300">
+<body class="bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-950 dark:to-slate-900 text-slate-800 dark:text-slate-200 font-sans antialiased min-h-screen transition-colors duration-300 relative">
 
     <!-- Header -->
-    <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-20">
+    <header class="bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border-b border-white/40 dark:border-slate-800/50 sticky top-0 z-20">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 flex items-center justify-center rounded-md overflow-hidden bg-transparent">
@@ -49,11 +52,11 @@
             </div>
             
             <div class="flex items-center gap-4">
-                <button id="themeToggleBtn" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition">
+                <button id="themeToggleBtn" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition">
                     <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
                     <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
                 </button>
-                <button id="mainActionBtn" class="hidden md:flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-lg font-medium transition shadow-sm text-sm">
+                <button id="mainActionBtn" class="hidden md:flex items-center gap-2 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white px-4 py-2.5 rounded-lg font-medium transition shadow-md shadow-brand-600/20 text-sm">
                     <i data-lucide="plus" class="w-4 h-4"></i>
                     <span id="mainActionText">New Sale Entry</span>
                 </button>
@@ -65,7 +68,7 @@
     <main class="max-w-7xl mx-auto px-6 py-8">
         
         <!-- Desktop Tab Navigation -->
-        <div class="flex items-center gap-2 mb-6 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl w-fit">
+        <div class="flex items-center gap-2 mb-6 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md p-1 rounded-xl w-fit border border-white/20 dark:border-slate-700/30 shadow-sm">
             <button id="tabNavSales" class="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition tab-active">
                 <i data-lucide="shopping-cart" class="w-4 h-4"></i> Sales
             </button>
@@ -77,47 +80,55 @@
         <!-- SALES VIEW -->
         <div id="viewSales" class="fade-in">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                <div class="bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-lg rounded-xl p-6 flex items-center justify-between">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Total Revenue</p>
                         <p id="statRevenue" class="text-2xl font-bold text-slate-900 dark:text-white">₹0.00</p>
                     </div>
-                    <div class="p-3 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-lg"><i data-lucide="indian-rupee" class="w-6 h-6"></i></div>
+                    <div class="p-3 bg-emerald-500/10 dark:bg-emerald-400/10 text-emerald-600 dark:text-emerald-400 rounded-lg"><i data-lucide="indian-rupee" class="w-6 h-6"></i></div>
                 </div>
 
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                <div class="bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-lg rounded-xl p-6 flex items-center justify-between">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Total Orders</p>
                         <p id="statSalesCount" class="text-2xl font-bold text-slate-900 dark:text-white">0</p>
                     </div>
-                    <div class="p-3 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 rounded-lg"><i data-lucide="shopping-bag" class="w-6 h-6"></i></div>
+                    <div class="p-3 bg-blue-500/10 dark:bg-blue-400/10 text-blue-600 dark:text-blue-400 rounded-lg"><i data-lucide="shopping-bag" class="w-6 h-6"></i></div>
                 </div>
 
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                <div class="bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-lg rounded-xl p-6 flex items-center justify-between">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Avg Order Value</p>
                         <p id="statAvgValue" class="text-2xl font-bold text-slate-900 dark:text-white">₹0.00</p>
                     </div>
-                    <div class="p-3 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 rounded-lg"><i data-lucide="trending-up" class="w-6 h-6"></i></div>
+                    <div class="p-3 bg-amber-500/10 dark:bg-amber-400/10 text-amber-600 dark:text-amber-400 rounded-lg"><i data-lucide="trending-up" class="w-6 h-6"></i></div>
                 </div>
 
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                <div class="bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-lg rounded-xl p-6 flex items-center justify-between">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Catalog Products</p>
                         <p id="statTotalProductsCount" class="text-2xl font-bold text-slate-900 dark:text-white">0</p>
                     </div>
-                    <div class="p-3 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-lg"><i data-lucide="box" class="w-6 h-6"></i></div>
+                    <div class="p-3 bg-indigo-500/10 dark:bg-indigo-400/10 text-indigo-600 dark:text-indigo-400 rounded-lg"><i data-lucide="box" class="w-6 h-6"></i></div>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+            <div class="bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-lg rounded-xl overflow-hidden">
+                <div class="px-6 py-4 border-b border-white/40 dark:border-slate-700/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <h2 class="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2"><i data-lucide="receipt" class="w-4 h-4 text-slate-500"></i> Recent Sales Entries</h2>
-                    <input type="text" id="salesSearchInput" placeholder="Search sales..." class="text-sm border border-slate-300 dark:border-slate-700 bg-transparent rounded-lg px-3 py-1.5 focus:outline-none text-slate-900 dark:text-white">
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <select id="salesSortSelect" class="text-sm border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md rounded-lg px-3 py-1.5 focus:outline-none text-slate-900 dark:text-white cursor-pointer w-full sm:w-auto">
+                            <option value="date-desc">Newest First</option>
+                            <option value="date-asc">Oldest First</option>
+                            <option value="price-desc">Amount: High to Low</option>
+                            <option value="price-asc">Amount: Low to High</option>
+                        </select>
+                        <input type="text" id="salesSearchInput" placeholder="Search sales..." class="text-sm border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md rounded-lg px-3 py-1.5 focus:outline-none text-slate-900 dark:text-white w-full sm:w-auto">
+                    </div>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-semibold uppercase text-xs">
+                        <thead class="bg-slate-50/50 dark:bg-slate-800/30 border-b border-white/40 dark:border-slate-700/50 text-slate-500 dark:text-slate-400 font-semibold uppercase text-xs">
                             <tr>
                                 <th class="px-6 py-3.5">Product</th>
                                 <th class="px-6 py-3.5">Platform</th>
@@ -127,7 +138,7 @@
                                 <th class="px-6 py-3.5">Notes</th>
                             </tr>
                         </thead>
-                        <tbody id="salesTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                        <tbody id="salesTableBody" class="divide-y divide-slate-200/50 dark:divide-slate-700/30"></tbody>
                     </table>
                 </div>
             </div>
@@ -136,39 +147,39 @@
         <!-- INVENTORY VIEW -->
         <div id="viewInventory" class="hidden fade-in">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                <div class="bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-lg rounded-xl p-6 flex items-center justify-between">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Total Items</p>
                         <p id="statInvTotalItems" class="text-2xl font-bold text-slate-900 dark:text-white">0</p>
                     </div>
-                    <div class="p-3 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 rounded-lg"><i data-lucide="box" class="w-6 h-6"></i></div>
+                    <div class="p-3 bg-blue-500/10 dark:bg-blue-400/10 text-blue-600 dark:text-blue-400 rounded-lg"><i data-lucide="box" class="w-6 h-6"></i></div>
                 </div>
 
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                <div class="bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-lg rounded-xl p-6 flex items-center justify-between">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Total Stock</p>
                         <p id="statInvTotalStock" class="text-2xl font-bold text-slate-900 dark:text-white">0</p>
                     </div>
-                    <div class="p-3 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-lg"><i data-lucide="layers" class="w-6 h-6"></i></div>
+                    <div class="p-3 bg-emerald-500/10 dark:bg-emerald-400/10 text-emerald-600 dark:text-emerald-400 rounded-lg"><i data-lucide="layers" class="w-6 h-6"></i></div>
                 </div>
 
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                <div class="bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-lg rounded-xl p-6 flex items-center justify-between">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Out of Stock</p>
                         <p id="statInvLowStock" class="text-2xl font-bold text-rose-600 dark:text-rose-400">0</p>
                     </div>
-                    <div class="p-3 bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 rounded-lg"><i data-lucide="alert-triangle" class="w-6 h-6"></i></div>
+                    <div class="p-3 bg-rose-500/10 dark:bg-rose-400/10 text-rose-600 dark:text-rose-400 rounded-lg"><i data-lucide="alert-triangle" class="w-6 h-6"></i></div>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+            <div class="bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-lg rounded-xl overflow-hidden">
+                <div class="px-6 py-4 border-b border-white/40 dark:border-slate-700/50 flex justify-between items-center">
                     <h2 class="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2"><i data-lucide="clipboard-list" class="w-4 h-4 text-slate-500"></i> Catalog Inventory</h2>
-                    <input type="text" id="inventorySearchInput" placeholder="Search products..." class="text-sm border border-slate-300 dark:border-slate-700 bg-transparent rounded-lg px-3 py-1.5 focus:outline-none text-slate-900 dark:text-white">
+                    <input type="text" id="inventorySearchInput" placeholder="Search products..." class="text-sm border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md rounded-lg px-3 py-1.5 focus:outline-none text-slate-900 dark:text-white">
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-semibold uppercase text-xs">
+                        <thead class="bg-slate-50/50 dark:bg-slate-800/30 border-b border-white/40 dark:border-slate-700/50 text-slate-500 dark:text-slate-400 font-semibold uppercase text-xs">
                             <tr>
                                 <th class="px-6 py-3.5">Product Name</th>
                                 <th class="px-6 py-3.5">Website Price</th>
@@ -179,7 +190,7 @@
                                 <th class="px-6 py-3.5">Status</th>
                             </tr>
                         </thead>
-                        <tbody id="inventoryTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                        <tbody id="inventoryTableBody" class="divide-y divide-slate-200/50 dark:divide-slate-700/30"></tbody>
                     </table>
                 </div>
             </div>
@@ -187,24 +198,24 @@
 
         <!-- STATS / ANALYTICS VIEW -->
         <div id="viewStats" class="hidden fade-in space-y-6">
-            <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-lg rounded-xl p-6">
                 <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                     <i data-lucide="bar-chart-3" class="w-5 h-5 text-brand-600"></i> Performance Analytics
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-800">
+                    <div class="p-4 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-xl border border-white/30 dark:border-slate-700/30">
                         <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Gross Revenue</p>
                         <p id="statsDashRevenue" class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">₹0.00</p>
                     </div>
-                    <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-800">
+                    <div class="p-4 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-xl border border-white/30 dark:border-slate-700/30">
                         <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Total Orders Logged</p>
                         <p id="statsDashOrders" class="text-2xl font-bold text-slate-900 dark:text-white mt-1">0</p>
                     </div>
-                    <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-800">
+                    <div class="p-4 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-xl border border-white/30 dark:border-slate-700/30">
                         <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Average Order Value</p>
                         <p id="statsDashAvgOrder" class="text-2xl font-bold text-brand-600 dark:text-brand-400 mt-1">₹0.00</p>
                     </div>
-                    <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-800">
+                    <div class="p-4 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-xl border border-white/30 dark:border-slate-700/30">
                         <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Total Items in Stock</p>
                         <p id="statsDashStock" class="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">0</p>
                     </div>
@@ -216,19 +227,19 @@
 
     <!-- SALE ENTRY MODAL -->
     <div id="saleModalOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl max-w-md w-full overflow-hidden fade-in">
-            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+        <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-white/50 dark:border-slate-700/50 shadow-2xl rounded-xl max-w-md w-full overflow-hidden fade-in">
+            <div class="px-6 py-4 border-b border-slate-200/50 dark:border-slate-800/50 flex justify-between items-center">
                 <h3 class="font-semibold text-slate-900 dark:text-white flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5 text-brand-600"></i> Add Sale Record</h3>
                 <button id="closeSaleModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <form id="saleForm" class="p-6 space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Product</label>
-                    <select id="saleProductSelect" required class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white"></select>
+                    <select id="saleProductSelect" required class="w-full border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white"></select>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Platform</label>
-                    <select id="salePlatformSelect" required class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white">
+                    <select id="salePlatformSelect" required class="w-full border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white">
                         <option value="" disabled selected>Select Platform...</option>
                         <option value="Aura Website">Aura Website</option>
                         <option value="Meesho">Meesho</option>
@@ -239,11 +250,11 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Amount (₹ INR)</label>
-                    <input type="number" id="salePriceInput" required step="0.01" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white" placeholder="0.00">
+                    <input type="number" id="salePriceInput" required step="0.01" class="w-full border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white" placeholder="0.00">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Payment Method</label>
-                    <select id="saleModeSelect" required class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white">
+                    <select id="saleModeSelect" required class="w-full border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white">
                         <option value="UPI">UPI</option>
                         <option value="Cash">Cash</option>
                         <option value="Card / Net Banking">Card / Net Banking</option>
@@ -251,11 +262,11 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Notes (Optional)</label>
-                    <input type="text" id="saleNotesInput" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white" placeholder="Order details...">
+                    <input type="text" id="saleNotesInput" class="w-full border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white" placeholder="Order details...">
                 </div>
-                <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
-                    <button type="button" id="cancelSaleBtn" class="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300">Cancel</button>
-                    <button type="submit" id="submitSaleBtn" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium">Submit Entry</button>
+                <div class="pt-4 flex justify-end gap-3 border-t border-slate-200/50 dark:border-slate-800/50">
+                    <button type="button" id="cancelSaleBtn" class="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 bg-white/50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Cancel</button>
+                    <button type="submit" id="submitSaleBtn" class="px-4 py-2 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white rounded-lg text-sm font-medium shadow-md shadow-brand-600/20 transition">Submit Entry</button>
                 </div>
             </form>
         </div>
@@ -263,77 +274,75 @@
 
     <!-- INVENTORY ENTRY MODAL -->
     <div id="inventoryModalOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl max-w-md w-full overflow-hidden fade-in">
-            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+        <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-white/50 dark:border-slate-700/50 shadow-2xl rounded-xl max-w-md w-full overflow-hidden fade-in">
+            <div class="px-6 py-4 border-b border-slate-200/50 dark:border-slate-800/50 flex justify-between items-center">
                 <h3 class="font-semibold text-slate-900 dark:text-white flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5 text-brand-600"></i> Add Product</h3>
                 <button id="closeInventoryModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <form id="inventoryForm" class="p-6 space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Product Name</label>
-                    <input type="text" id="invProductName" required class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white">
+                    <input type="text" id="invProductName" required class="w-full border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white">
                 </div>
                 <div class="grid grid-cols-3 gap-2">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Website ₹</label>
-                        <input type="number" id="invPriceWebsite" step="0.01" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-2 py-2 text-sm text-slate-900 dark:text-white">
+                        <input type="number" id="invPriceWebsite" step="0.01" class="w-full border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 rounded-lg px-2 py-2 text-sm text-slate-900 dark:text-white">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Meesho ₹</label>
-                        <input type="number" id="invPriceMeesho" step="0.01" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-2 py-2 text-sm text-slate-900 dark:text-white">
+                        <input type="number" id="invPriceMeesho" step="0.01" class="w-full border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 rounded-lg px-2 py-2 text-sm text-slate-900 dark:text-white">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Offline ₹</label>
-                        <input type="number" id="invPriceOffline" step="0.01" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-2 py-2 text-sm text-slate-900 dark:text-white">
+                        <input type="number" id="invPriceOffline" step="0.01" class="w-full border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 rounded-lg px-2 py-2 text-sm text-slate-900 dark:text-white">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Stock</label>
-                        <input type="number" id="invStock" required class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white">
+                        <input type="number" id="invStock" required class="w-full border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Manufactured</label>
-                        <input type="number" id="invManufactured" required class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white">
+                        <input type="number" id="invManufactured" required class="w-full border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white">
                     </div>
                 </div>
-                <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
-                    <button type="button" id="cancelInventoryBtn" class="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300">Cancel</button>
-                    <button type="submit" id="submitInventoryBtn" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium">Save Product</button>
+                <div class="pt-4 flex justify-end gap-3 border-t border-slate-200/50 dark:border-slate-800/50">
+                    <button type="button" id="cancelInventoryBtn" class="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 bg-white/50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Cancel</button>
+                    <button type="submit" id="submitInventoryBtn" class="px-4 py-2 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white rounded-lg text-sm font-medium shadow-md shadow-brand-600/20 transition">Save Product</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- MOBILE BOTTOM NAVIGATION -->
-    <div class="md:hidden fixed bottom-0 left-0 right-0 glass-nav z-40 px-6 py-3">
-        <div class="flex justify-between items-center max-w-md mx-auto">
+<div class="md:hidden fixed bottom-0 left-0 right-0 z-40 px-4 py-3 bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl border-t border-slate-200/50 dark:border-slate-800/50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
+    <div class="flex justify-between items-center max-w-md mx-auto">
+        
+        <!-- Left Group: Nav Items -->
+        <div class="flex items-center gap-6">
             <button id="mobileNavSales" class="mobile-nav-item active flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
-                <i data-lucide="home" class="w-6 h-6"></i>
+                <i data-lucide="home" class="w-5 h-5"></i>
                 <span class="text-[10px] font-medium">Home</span>
             </button>
-
             <button id="mobileNavInventory" class="mobile-nav-item flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
-                <i data-lucide="package" class="w-6 h-6"></i>
+                <i data-lucide="package" class="w-5 h-5"></i>
                 <span class="text-[10px] font-medium">Inventory</span>
             </button>
-
-            <button id="mobileActionBtn" class="flex flex-col items-center justify-center -mt-8 bg-brand-600 text-white w-14 h-14 rounded-full shadow-lg border-4 border-white dark:border-slate-950">
-                <i data-lucide="plus" class="w-6 h-6"></i>
-            </button>
-
-            <button id="mobileNavStats" class="mobile-nav-item flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400 transition-colors">
-                <i data-lucide="bar-chart-2" class="w-6 h-6"></i>
+            <button id="mobileNavStats" class="mobile-nav-item flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
+                <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
                 <span class="text-[10px] font-medium">Stats</span>
             </button>
-
-            <button class="mobile-nav-item flex flex-col items-center gap-1 text-slate-300 dark:text-slate-700 cursor-not-allowed pointer-events-none opacity-40">
-                <i data-lucide="user" class="w-6 h-6"></i>
-                <span class="text-[10px] font-medium">Profile</span>
-            </button>
         </div>
+
+        <!-- Right: Pill Action Button -->
+        <button id="mobileActionBtn" class="flex items-center gap-2 bg-gradient-to-r from-brand-500 to-brand-700 text-white px-5 py-2.5 rounded-full shadow-lg shadow-brand-500/30 border border-brand-400/20 transition-transform active:scale-95">
+            <i data-lucide="plus" class="w-5 h-5"></i>
+            <span class="text-sm font-semibold tracking-wide">Add</span>
+        </button>
     </div>
-    
+</div>
     <script src="script.js"></script>
 </body>
 </html>

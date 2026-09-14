@@ -8,7 +8,7 @@
 /* Tab Navigation Active State */
 .tab-active {
     background-color: #ffffff;
-    color: #d94960; /* brand-600 */
+    color: #55132e; /* brand-600 */
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
@@ -65,7 +65,7 @@
 
 /* Nav Item Active State (Mobile) */
 .mobile-nav-item.active {
-    color: #d94960; /* brand-600 */
+    color: #55132e; /* brand-600 */
 }
 .dark .mobile-nav-item.active {
     color: #f4aeb6; /* brand-400 */
