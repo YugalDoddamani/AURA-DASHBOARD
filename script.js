@@ -3,7 +3,7 @@
 // ========================================================
 
 // PASTE YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL HERE:
-const GOOGLE_APPS_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyZHFQn7Ua1lFpme0Jsl1YPyLbvPv1JwaGSnkaZNqdJmF5PMXroN_6Po_4qesKi9tlbUw/exec';
 
 // --------------------------------------------------------
 // Initial Catalog & Pricing Data (Pre-loaded from Sheet2)
