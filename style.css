@@ -42,3 +42,97 @@
     from { opacity: 0; transform: translateY(-5px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+
+/* =========================================
+   MOBILE BOTTOM NAV & GLASSMORPHISM
+   ========================================= */
+
+/* Glassmorphism Bottom Nav */
+.glass-nav {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.dark .glass-nav {
+    background: rgba(17, 17, 17, 0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Nav Item Active State (Mobile) */
+.mobile-nav-item.active {
+    color: #d94960; /* brand-600 */
+}
+.dark .mobile-nav-item.active {
+    color: #f4aeb6; /* brand-400 */
+}
+
+/* Add padding to body so content isn't hidden behind the fixed bottom nav */
+@media (max-width: 768px) {
+    body {
+        padding-bottom: 80px;
+    }
+}
+
+
+@media (max-width: 768px) {
+    /* Turn table rows into cards */
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    
+    /* Hide table headers on mobile */
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    tr {
+        margin-bottom: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        background: white;
+        padding: 0.5rem;
+    }
+    .dark tr {
+        border-color: #1e293b;
+        background: #111111;
+    }
+
+    td {
+        border: none;
+        position: relative;
+        padding-left: 50% !important;
+        text-align: right;
+        border-bottom: 1px solid #f1f5f9;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+    .dark td {
+        border-bottom-color: #1e293b;
+    }
+    
+    td:last-child {
+        border-bottom: none;
+    }
+
+    /* Add labels to the left of each value */
+    td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: 600;
+        color: #64748b;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+    }
+}

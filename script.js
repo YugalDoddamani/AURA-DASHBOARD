@@ -44,6 +44,44 @@ let catalogData = [
 let salesLog = [];
 let currentTab = 'sales'; // 'sales' or 'inventory'
 
+
+    // --------------------------------------------------------
+    // Mobile Bottom Navigation Logic
+    // --------------------------------------------------------
+    const mobileNavSales = document.getElementById('mobileNavSales');
+    const mobileNavInventory = document.getElementById('mobileNavInventory');
+    const mobileActionBtn = document.getElementById('mobileActionBtn');
+
+    if (mobileNavSales && mobileNavInventory) {
+        mobileNavSales.addEventListener('click', () => {
+            switchTab('sales');
+            updateMobileNavState('sales');
+        });
+
+        mobileNavInventory.addEventListener('click', () => {
+            switchTab('inventory');
+            updateMobileNavState('inventory');
+        });
+
+        mobileActionBtn.addEventListener('click', () => {
+            if (currentTab === 'sales') {
+                saleModalOverlay.classList.remove('hidden');
+            } else {
+                inventoryModalOverlay.classList.remove('hidden');
+            }
+        });
+    }
+
+    function updateMobileNavState(tab) {
+        if (tab === 'sales') {
+            mobileNavSales.classList.add('active');
+            mobileNavInventory.classList.remove('active');
+        } else {
+            mobileNavInventory.classList.add('active');
+            mobileNavSales.classList.remove('active');
+        }
+    }
+
 // DOM Elements
 const themeToggleBtn = document.getElementById('themeToggleBtn');
 const tabNavSales = document.getElementById('tabNavSales');
