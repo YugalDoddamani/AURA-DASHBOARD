@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Momentos - Sales & Inventory Dashboard</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Configuration for Custom Colors and Dark Mode -->
+   <!-- Tailwind Configuration for Custom Colors and Dark Mode -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fdf2f4',
+                            100: '#fbe5e9',
+                            400: '#f4aeb6',
+                            500: '#ec7b8a',
+                            600: '#d94960', /* Main Button Color */
+                            700: '#b83348',
+                            900: '#8c1b40', /* Deep Magenta */
+                            950: '#4a0d20',
+                            logo: '#f7d6d9' /* Pale pink from the logo text */
+                        },
+                        slate: {
+                            850: '#1e1e1e',
+                            900: '#111111',
+                            950: '#0a0a0a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-200 font-sans antialiased min-h-screen transition-colors duration-300">
+
+    <!-- Header -->
+<header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-20">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        
+        <!-- LEFT SIDE: Logo + Text -->
+        <div class="flex items-center gap-3">
+            <!-- Fixed Image Logo -->
+            <div class="w-10 h-10 flex items-center justify-center rounded-md overflow-hidden bg-transparent">
+                <!-- Renamed src to be clean. Make sure file is named "logo.png" (no space) -->
+                <img src="logo  png.png" alt="Aura Logo" class="w-full h-full object-contain branding-logo">
+            </div>
+            
+            <!-- Text Labels -->
+            <div>
+                <h1 class="text-xl font-bold text-slate-900 dark:text-white">Aura Momentos</h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Sales & Inventory Dashboard</p>
+            </div>
+        </div>
+        
+        <!-- RIGHT SIDE: Theme + Action Button -->
+        <div class="flex items-center gap-4">
+            <!-- Theme Toggle -->
+            <button id="themeToggleBtn" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition">
+                <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+            </button>
+
+            <!-- Action Button -->
+            <button id="mainActionBtn" class="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-lg font-medium transition shadow-sm text-sm">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span id="mainActionText">New Sale Entry</span>
+            </button>
+        </div>
+
+    </div>
+</header>
+
+    <!-- Main Dashboard -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        
+        <!-- Tab Navigation -->
+        <div class="flex items-center gap-2 mb-6 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl w-fit">
+            <button id="tabNavSales" class="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition tab-active">
+                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                Sales
+            </button>
+            <button id="tabNavInventory" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 rounded-lg transition">
+                <i data-lucide="package" class="w-4 h-4"></i>
+                Inventory
+            </button>
+        </div>
+
+        <!-- SALES VIEW -->
+        <div id="viewSales" class="fade-in">
+            <!-- Summary Stats (Sales) -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Total Revenue</p>
+                        <p id="statRevenue" class="text-2xl font-bold text-slate-900 dark:text-white">₹0.00</p>
+                    </div>
+                    <div class="p-3 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-lg">
+                        <i data-lucide="indian-rupee" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Total Orders</p>
+                        <p id="statSalesCount" class="text-2xl font-bold text-slate-900 dark:text-white">0</p>
+                    </div>
+                    <div class="p-3 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 rounded-lg">
+                        <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Avg Order Value</p>
+                        <p id="statAvgValue" class="text-2xl font-bold text-slate-900 dark:text-white">₹0.00</p>
+                    </div>
+                    <div class="p-3 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 rounded-lg">
+                        <i data-lucide="trending-up" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Catalog Products</p>
+                        <p id="statTotalProductsCount" class="text-2xl font-bold text-slate-900 dark:text-white">30</p>
+                    </div>
+                    <div class="p-3 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-lg">
+                        <i data-lucide="box" class="w-6 h-6"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sales Log Table -->
+            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                    <h2 class="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                        <i data-lucide="receipt" class="w-4 h-4 text-slate-500"></i>
+                        Recent Sales Entries
+                    </h2>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="salesSearchInput" placeholder="Search sales..." class="text-sm border border-slate-300 dark:border-slate-700 bg-transparent rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-white">
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-semibold uppercase text-xs">
+                            <tr>
+                                <th class="px-6 py-3.5">Product</th>
+                                <th class="px-6 py-3.5">Platform</th>
+                                <th class="px-6 py-3.5">Amount</th>
+                                <th class="px-6 py-3.5">Payment Method</th>
+                                <th class="px-6 py-3.5">Date</th>
+                                <th class="px-6 py-3.5">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                            <tr id="emptySalesRow">
+                                <td colspan="6" class="px-6 py-8 text-center text-slate-400 dark:text-slate-500">
+                                    No sales recorded yet. Click "New Sale Entry" to log data.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- INVENTORY VIEW -->
+        <div id="viewInventory" class="hidden fade-in">
+            <!-- Summary Stats (Inventory) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Total Items</p>
+                        <p id="statInvTotalItems" class="text-2xl font-bold text-slate-900 dark:text-white">0</p>
+                    </div>
+                    <div class="p-3 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 rounded-lg">
+                        <i data-lucide="box" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Total Stock</p>
+                        <p id="statInvTotalStock" class="text-2xl font-bold text-slate-900 dark:text-white">0</p>
+                    </div>
+                    <div class="p-3 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-lg">
+                        <i data-lucide="layers" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Out of Stock</p>
+                        <p id="statInvLowStock" class="text-2xl font-bold text-rose-600 dark:text-rose-400">0</p>
+                    </div>
+                    <div class="p-3 bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 rounded-lg">
+                        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Table -->
+            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                    <h2 class="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                        <i data-lucide="clipboard-list" class="w-4 h-4 text-slate-500"></i>
+                        Catalog Inventory
+                    </h2>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="inventorySearchInput" placeholder="Search products..." class="text-sm border border-slate-300 dark:border-slate-700 bg-transparent rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-white">
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-semibold uppercase text-xs">
+                            <tr>
+                                <th class="px-6 py-3.5">Product Name</th>
+                                <th class="px-6 py-3.5">Website Price</th>
+                                <th class="px-6 py-3.5">Meesho Price</th>
+                                <th class="px-6 py-3.5">Offline Price</th>
+                                <th class="px-6 py-3.5">Stock</th>
+                                <th class="px-6 py-3.5">Manufactured</th>
+                                <th class="px-6 py-3.5">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                            <!-- Rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- SALE ENTRY MODAL -->
+    <div id="saleModalOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl max-w-md w-full overflow-hidden fade-in">
+            
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                <h3 class="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5 text-brand-600"></i>
+                    Add Sale Record
+                </h3>
+                <button id="closeSaleModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="saleForm" class="p-6 space-y-4">
+                <!-- Product Dropdown -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Product</label>
+                    <select id="saleProductSelect" required class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-white">
+                        <option value="" disabled selected>Select a Product...</option>
+                    </select>
+                </div>
+
+                <!-- Platform Dropdown -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Platform</label>
+                    <select id="salePlatformSelect" required class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-white">
+                        <option value="" disabled selected>Select Platform...</option>
+                        <option value="Aura Website">Aura Website</option>
+                        <option value="Meesho">Meesho</option>
+                        <option value="Offline">Offline</option>
+                        <option value="Instagram">Instagram</option>
+                        <option value="WhatsApp">WhatsApp</option>
+                    </select>
+                </div>
+
+                <!-- Price Field -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Amount (₹ INR)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 font-medium">₹</span>
+                        <input type="number" id="salePriceInput" required step="0.01" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg pl-7 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-white" placeholder="0.00">
+                    </div>
+                </div>
+
+                <!-- Payment Method Dropdown -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Payment Method</label>
+                    <select id="saleModeSelect" required class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-white">
+                        <option value="" disabled selected>Select Payment Method...</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Card / Net Banking">Card / Net Banking</option>
+                    </select>
+                </div>
+
+                <!-- Notes Optional -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Notes (Optional)</label>
+                    <input type="text" id="saleNotesInput" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-white" placeholder="Customer name or order ID...">
+                </div>
+
+                <!-- Actions -->
+                <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
+                    <button type="button" id="cancelSaleBtn" class="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-slate-800">Cancel</button>
+                    <button type="submit" id="submitSaleBtn" class="flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium transition shadow-sm">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        <span>Submit Entry</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- INVENTORY ENTRY MODAL -->
+    <div id="inventoryModalOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl max-w-md w-full overflow-hidden fade-in">
+            
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                <h3 class="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5 text-brand-600"></i>
+                    Add Catalog Product
+                </h3>
+                <button id="closeInventoryModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="inventoryForm" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Product Name</label>
+                    <input type="text" id="invProductName" required class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-white" placeholder="e.g. Cherry red charm bracelet">
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Website (₹)</label>
+                        <input type="number" id="invPriceWebsite" step="0.01" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-white" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Meesho (₹)</label>
+                        <input type="number" id="invPriceMeesho" step="0.01" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-white" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Offline (₹)</label>
+                        <input type="number" id="invPriceOffline" step="0.01" class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-white" placeholder="0">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Stock</label>
+                        <input type="number" id="invStock" required class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-white" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1.5">Manufactured</label>
+                        <input type="number" id="invManufactured" required class="w-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-white" placeholder="0">
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
+                    <button type="button" id="cancelInventoryBtn" class="px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-slate-800">Cancel</button>
+                    <button type="submit" id="submitInventoryBtn" class="flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium transition shadow-sm">
+                        <i data-lucide="save" class="w-4 h-4"></i>
+                        <span>Save Product</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
