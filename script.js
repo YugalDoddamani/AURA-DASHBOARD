@@ -339,12 +339,12 @@ if (saleForm) {
             updateInventoryStats();
         }
 
-        if (GOOGLE_APPS_SCRIPT_URL) {
+       if (GOOGLE_APPS_SCRIPT_URL) {
             try {
                 await fetch(GOOGLE_APPS_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(newSale)
                 });
             } catch (err) {
@@ -388,7 +388,7 @@ if (inventoryForm) {
                 await fetch(GOOGLE_APPS_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(newProduct)
                 });
             } catch (err) {
